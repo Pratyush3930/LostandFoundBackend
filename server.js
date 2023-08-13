@@ -12,6 +12,8 @@ app.use(cors({
     // optionsSuccessStatus: 204,
 }))
 app.use(express.json());
+app.use(express.urlencoded({extended: false}))
+// This tells our application to take the forms that we post from the frontend and we can access them inside our post method using req.body
 
 
 app.use('/api/users', userRoutes);
