@@ -16,8 +16,9 @@ const bcrypt = require('bcrypt');
 // }
 
 const addUser = async (req, res) => {
-    const { name: username, email, password } = req.body;
     try {
+        const { username, email, password } = req.body;
+        console.log(username)
         const hashedPassword = await bcrypt.hash(password, 10);
         // the bcrypt is a library that is used for hashing password securely
         // the 10 indicates salt factor which determines how complex the hashing should be 
