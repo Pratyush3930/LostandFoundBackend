@@ -3,7 +3,10 @@ const controller = require('./controller');
 
 const router = Router();
 
-router.get('/' , controller.getUsers);
+router.post('/login' , passport.authenticate["local" , {
+    successRedirect : '/home',
+    failureRedirect: '/login',
+}]);
 
 router.post('/register' , controller.addUser);
 

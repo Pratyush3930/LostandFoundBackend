@@ -1,19 +1,12 @@
 const client = require('../../db');
 const queries = require('./queries');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 
-// const getUserByName = (req , res) => {
-//     const Username = req.params.name;
-//     client.query(queries.getUsersById , [id] , (error,results) =>{
-//         const noUserId = !results.rows.length;
-//         if(results.row.length) {
-//             res.send("User does not exist!");
-//         }
-//         else {
-//             res.status(200).send(req.body);
-//         }
-//     } )
-// }
+// const  initializePassport = require('../../passport-config')
+// initializePassport(passport , email => {
+//     client.queries(queries.checkUserExists)
+// }, username)
 
 const addUser = async (req, res) => {
     try {
@@ -40,15 +33,33 @@ const addUser = async (req, res) => {
 
 }
 
-const getUsers = (req, res) => {
+const getUser = async (req, res) => {
+    const {username , password} = req.body;
 
-    client.query(queries.getUsers, (error, results) => {
+    client.query(queries.getUser, [username] , async (error, results) => {
         console.log('getUsers called');
-        if (error) throw error;
-        res.status(200).json(results.rows);
+        if (error){
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            const user = results.rows[0];
+            if (user && await bcrypt.compare(password , user.password))
+            {
+                req.session.user = user;
+                res.status(200).send("Login successful");
+            } else {
+                res.status(401).send('Invalid username or password')
+            }
+        }
     })
 
     //res.json({status: true});
 }
 
-module.exports = { addUser, getUsers };
+// logout route
+// app.post('/logout', (req, res) => {
+//     req.session.destroy();
+//     res.send('Logged out successfully');
+//   });
+
+module.exports = { addUser ,getUser};

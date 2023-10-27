@@ -4,6 +4,13 @@ const itemRoutes = require('./src/items/routes')
 const cors = require('cors')
 const app = express();
 const port = 8000;
+const session = require('express-session');
+const flash = require('express-flash');
+const passport = require("passport");
+
+const intializePassport = require("./passport-config");
+
+intializePassport(passport);
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -15,6 +22,20 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}))
 // This tells our application to take the forms that we post from the frontend and we can access them inside our post method using req.body
 
+app.use(
+    session({
+        secret: "secret",
+
+        resave: false ,
+        
+        saveUninitialized: false
+    })
+);
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use(flash());
 
 app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);
