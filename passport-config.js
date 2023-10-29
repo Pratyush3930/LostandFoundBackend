@@ -27,8 +27,9 @@
 
 // module.exports = initialize;
 
+const passport = require('passport')
 const LocalStrategy = require("passport-local").Strategy;
-const client = require('../../db');
+const client = require('./db');
 const bcrypt = require("bcrypt");
 
 function initialize(passport) {

@@ -33,7 +33,7 @@ const addUser = async (req, res) => {
 
 }
 
-const getUser = async (req, res) => {
+const loginUser = async (req, res) => {
     const {username , password} = req.body;
 
     client.query(queries.getUser, [username] , async (error, results) => {
@@ -56,10 +56,22 @@ const getUser = async (req, res) => {
     //res.json({status: true});
 }
 
+
+const getUser = (req, res) => {
+    if(error) {
+        console.log(error);
+        res.send("Cannot get user info");
+    }
+    else {
+        const user = req.session.user;
+        console.log(user);
+        res.send(user);
+    }
+}
 // logout route
 // app.post('/logout', (req, res) => {
 //     req.session.destroy();
 //     res.send('Logged out successfully');
 //   });
 
-module.exports = { addUser ,getUser};
+module.exports = { addUser ,getUser, loginUser};
