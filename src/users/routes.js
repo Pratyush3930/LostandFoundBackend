@@ -12,6 +12,6 @@ router.post('/login' , controller.loginUser
 
 router.post('/register' , controller.addUser);
 
-router.get('/get-user-info' , controller.getUser)
+// router.get('/get-user-info' , controller.getUser)
 
 module.exports = router;

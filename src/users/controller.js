@@ -1,7 +1,7 @@
 const client = require('../../db');
 const queries = require('./queries');
 const bcrypt = require('bcrypt');
-const passport = require('passport');
+// const passport = require('passport');
 
 // const  initializePassport = require('../../passport-config')
 // initializePassport(passport , email => {
@@ -37,7 +37,7 @@ const loginUser = async (req, res) => {
     const {username , password} = req.body;
 
     client.query(queries.getUser, [username] , async (error, results) => {
-        console.log('getUsers called');
+        console.log('loginUser called');
         if (error){
             console.error(error);
             res.status(500).send('Internal Server Error');
@@ -46,7 +46,9 @@ const loginUser = async (req, res) => {
             if (user && await bcrypt.compare(password , user.password))
             {
                 req.session.user = user;
-                res.status(200).send("Login successful");
+                console.log(req.session.user);
+                userData = JSON.stringify(req.session.user);
+                res.status(200).send(userData);
             } else {
                 res.status(401).send('Invalid username or password')
             }
@@ -56,22 +58,27 @@ const loginUser = async (req, res) => {
     //res.json({status: true});
 }
 
-
-const getUser = (req, res) => {
-    if(error) {
-        console.log(error);
-        res.send("Cannot get user info");
-    }
-    else {
-        const user = req.session.user;
-        console.log(user);
-        res.send(user);
-    }
-}
+// The code below is sending data but frond end is not receiving
+// so debug it someday....
+// const getUser = (req, res) => {
+//     try {
+//         res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+//         res.header('Access-Control-Allow-Credentials', 'true');
+//         console.log("Ran till here");
+//         const userData = req.session.user;
+//         console.log(userData);
+//         const jsonUser = JSON.stringify(userData);
+//         console.log("json data " , jsonUser)
+        
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// }
 // logout route
 // app.post('/logout', (req, res) => {
 //     req.session.destroy();
 //     res.send('Logged out successfully');
 //   });
 
-module.exports = { addUser ,getUser, loginUser};
+module.exports = { addUser , loginUser};
