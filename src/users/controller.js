@@ -75,10 +75,11 @@ const loginUser = async (req, res) => {
 //         res.status(500).send('Internal Server Error');
 //     }
 // }
-// logout route
-// app.post('/logout', (req, res) => {
-//     req.session.destroy();
-//     res.send('Logged out successfully');
-//   });
 
-module.exports = { addUser , loginUser};
+// logout route
+const logoutUser = (req, res) => {
+    req.session.destroy();
+    res.send('Logged out successfully');
+}
+
+module.exports = { addUser , loginUser , logoutUser};

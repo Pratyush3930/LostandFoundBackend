@@ -14,4 +14,6 @@ router.post('/register' , controller.addUser);
 
 // router.get('/get-user-info' , controller.getUser)
 
+router.post('/logout ', controller.logoutUser);
+
 module.exports = router;
