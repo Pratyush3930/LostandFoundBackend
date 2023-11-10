@@ -18,7 +18,7 @@ const getItems = (req, res) => {
 const addItem = (req, res) => {
     const { itemName, lost_date, location, contact, ownerName, additionalInfo } = req.body;
     // return
-    client.query(queries.addItem, [itemName, location, contact, ownerName, additionalInfo], (error, results) => {
+    client.query(queries.addItem, [itemName, location, contact, ownerName, additionalInfo ,lost_date], (error, results) => {
         if(error) throw error;
         res.status(201).send("Lost item registered successfully!");
     })
