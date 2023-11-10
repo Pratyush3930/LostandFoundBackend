@@ -15,11 +15,11 @@ const getItems = (req, res) => {
     })
 }
 
-const lostItem = (req, res) => {
-    const { item_name, date_lost, location, contact, name, description } = req.body;
-    const status = 'lost';
+const addItem = (req, res) => {
+    const { itemName, lost_date, location, contact, ownerName, additionalInfo } = req.body;
     // return
-    client.query(queries.lostItem, [item_name, date_lost, location, status, contact, name, description], (error, results) => {
+    client.query(queries.addItem, [itemName, location, contact, ownerName, additionalInfo], (error, results) => {
+        if(error) throw error;
         res.status(201).send("Lost item registered successfully!");
     })
 }
@@ -29,12 +29,12 @@ const foundItem = (req, res) => {
     const { date_found } = req.body;
     const Date_found = new Date(date_found);
     console.log(Date_found);
-    
+
     const status = 'found';
-    client.query(queries.foundItem, [Date_found, status ,id ], (error, results) => {
+    client.query(queries.foundItem, [Date_found, status, id], (error, results) => {
         if (error) throw error;
         res.status(200).send("Please contact the person who lost the item for more details!");
     })
 }
 
-module.exports = { getItems, lostItem, foundItem, };
+module.exports = { getItems, addItem, foundItem };
