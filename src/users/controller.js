@@ -27,24 +27,23 @@ const addUser = async (req, res) => {
                 })
             }
         })
-    } catch(err) {
+    } catch (err) {
         res.send(err.message);
     }
 
 }
 
 const loginUser = async (req, res) => {
-    const {username , password} = req.body;
+    const { username, password } = req.body;
 
-    client.query(queries.getUser, [username] , async (error, results) => {
+    client.query(queries.getUser, [username], async (error, results) => {
         console.log('loginUser called');
-        if (error){
+        if (error) {
             console.error(error);
             res.status(500).send('Internal Server Error');
         } else {
             const user = results.rows[0];
-            if (user && await bcrypt.compare(password , user.password))
-            {
+            if (user && await bcrypt.compare(password, user.password)) {
                 req.session.user = user;
                 console.log(req.session.user);
                 userData = JSON.stringify(req.session.user);
@@ -58,28 +57,45 @@ const loginUser = async (req, res) => {
     //res.json({status: true});
 }
 
-// The code below is sending data but frond end is not receiving
-// so debug it someday....
-// const getUser = (req, res) => {
-//     try {
-//         res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-//         res.header('Access-Control-Allow-Credentials', 'true');
-//         console.log("Ran till here");
-//         const userData = req.session.user;
-//         console.log(userData);
-//         const jsonUser = JSON.stringify(userData);
-//         console.log("json data " , jsonUser)
-        
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('Internal Server Error');
-//     }
-// }
+const updateUser = async (req, res) => {
+    const { username, address, email, number, id } = req.body;
+    console.log('Reached here')
+    client.query(queries.updateUser, [username, address, email, number, id], (error, results) => {
 
-// logout route
-const logoutUser = (req, res) => {
-    req.session.destroy();
-    res.send('Logged out successfully');
+        if (error) throw error;
+        res.status(200).send("Information updated successfully!");
+    })
 }
 
-module.exports = { addUser , loginUser , logoutUser};
+const checkPassword = async (req, res) => {
+    console.log("asdaskdja")
+    console.log(req.body);
+    const { old_pass, id } = req.body;
+    try {
+        const results = await client.query(queries.getUserbyId, [id]);
+        const user = results.rows[0];
+        if (user && await bcrypt.compare(old_pass, user.password)) {
+            res.status(200).send("Password matched!");
+        } else {
+            res.status(250).send("The password does not match");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+const updatePassword = async (req, res) => {
+    const { id, new_pass } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(new_pass, 10);
+        await client.query(queries.updatePassword, [hashedPassword, id]);
+        res.send("Password changed successfully!");
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+module.exports = { addUser, loginUser, updateUser, checkPassword, updatePassword };
